@@ -1,17 +1,34 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { PlayingCard } from "./playing-card"
 import { RefreshCw } from "lucide-react"
+import type { DealerInfo } from "@/lib/types"
+
+const API_BASE = "http://localhost:8080/api/game"
 
 export function DealerSection() {
-  // In a real app, these would come from your game state
-  const dealerCards = [
-    { suit: "hearts", value: "A" },
-    { suit: "spades", value: "10" },
-  ]
-  const dealerValue = 21
+  const [dealerCards, setDealerCards] = useState<DealerInfo["cards"]>([])
+  const [dealerValue, setDealerValue] = useState<number>(0)
+
+  const fetchDealer = async () => {
+    const res = await fetch(`${API_BASE}/dealer`)
+    if (!res.ok) return
+    const data: DealerInfo = await res.json()
+    setDealerCards(data.cards)
+    setDealerValue(data.handValue)
+  }
+
+  useEffect(() => {
+    fetchDealer()
+  }, [])
+
+  const handleShuffle = async () => {
+    await fetch(`${API_BASE}/shuffle`, { method: "POST" })
+    await fetchDealer()
+  }
 
   return (
     <Card className="bg-emerald-900 border-emerald-600 shadow-lg">
@@ -20,14 +37,20 @@ export function DealerSection() {
           <h2 className="text-2xl font-bold text-white">Dealer</h2>
 
           <div className="flex flex-wrap justify-center gap-2">
-            {dealerCards.map((card, index) => (
-              <PlayingCard key={index} card={card} />
+            {dealerCards.map((card, idx) => (
+              <PlayingCard key={idx} card={card} />
             ))}
           </div>
 
-          <div className="text-xl font-semibold text-white">Hand Value: {dealerValue}</div>
+          <div className="text-xl font-semibold text-white">
+            Hand Value: {dealerValue}
+          </div>
 
-          <Button variant="outline" className="bg-emerald-700 text-white hover:bg-emerald-600 border-emerald-500">
+          <Button
+            variant="outline"
+            className="bg-emerald-700 text-white hover:bg-emerald-600 border-emerald-500"
+            onClick={handleShuffle}
+          >
             <RefreshCw className="mr-2 h-4 w-4" />
             Shuffle / Reset Deck
           </Button>

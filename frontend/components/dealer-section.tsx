@@ -9,7 +9,12 @@ import type { DealerInfo } from "@/lib/types"
 
 const API_BASE = "http://localhost:8080/api/game"
 
-export function DealerSection() {
+interface DealerSectionProps {
+  /** Toggled to force re-fetch */
+  refreshTrigger?: boolean
+}
+
+export function DealerSection({ refreshTrigger }: DealerSectionProps) {
   const [dealerCards, setDealerCards] = useState<DealerInfo["cards"]>([])
   const [dealerValue, setDealerValue] = useState<number>(0)
 
@@ -21,14 +26,15 @@ export function DealerSection() {
     setDealerValue(data.handValue)
   }
 
-  useEffect(() => {
-    fetchDealer()
-  }, [])
-
   const handleShuffle = async () => {
     await fetch(`${API_BASE}/shuffle`, { method: "POST" })
-    await fetchDealer()
+    fetchDealer()
   }
+
+  // Run on mount and whenever refreshTrigger flips
+  useEffect(() => {
+    fetchDealer()
+  }, [refreshTrigger])
 
   return (
     <Card className="bg-emerald-900 border-emerald-600 shadow-lg">

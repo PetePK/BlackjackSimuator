@@ -12,8 +12,10 @@ const API_BASE = "http://localhost:8080/api/game"
 export function BlackjackSimulator() {
   const [players, setPlayers] = useState<Player[]>([])
   const [simulationSpeed, setSimulationSpeed] = useState(1)
+  // toggles whenever a round or reset happens
+  const [dealerRefresh, setDealerRefresh] = useState(false)
 
-  /** Fetch players from backend */
+  /** Fetch all players */
   const fetchPlayers = async () => {
     const res = await fetch(`${API_BASE}/players`)
     if (!res.ok) return
@@ -24,7 +26,7 @@ export function BlackjackSimulator() {
     fetchPlayers()
   }, [])
 
-  /** Add a new player */
+  /** Add player */
   const addPlayer = async () => {
     if (players.length >= 8) return
     const newP: Partial<Player> = {
@@ -50,7 +52,7 @@ export function BlackjackSimulator() {
     fetchPlayers()
   }
 
-  /** Toggle active */
+  /** Toggle active status */
   const togglePlayerActive = async (id: string) => {
     await fetch(`${API_BASE}/players/${id}/toggle`, { method: "PUT" })
     fetchPlayers()
@@ -66,16 +68,18 @@ export function BlackjackSimulator() {
     fetchPlayers()
   }
 
-  /** Reset all */
+  /** Reset players & dealer */
   const resetAllPlayers = async () => {
     await fetch(`${API_BASE}/reset`, { method: "POST" })
     fetchPlayers()
+    setDealerRefresh(r => !r)
   }
 
   /** Play one round */
   const playOneRound = async () => {
     await fetch(`${API_BASE}/round`, { method: "POST" })
     fetchPlayers()
+    setDealerRefresh(r => !r)
   }
 
   /** Fast‑forward 100 rounds */
@@ -84,6 +88,7 @@ export function BlackjackSimulator() {
       await fetch(`${API_BASE}/round`, { method: "POST" })
     }
     fetchPlayers()
+    setDealerRefresh(r => !r)
   }
 
   return (
@@ -93,7 +98,7 @@ export function BlackjackSimulator() {
           Blackjack Simulator
         </h1>
 
-        <DealerSection />
+        <DealerSection refreshTrigger={dealerRefresh} />
 
         <GlobalControls
           simulationSpeed={simulationSpeed}

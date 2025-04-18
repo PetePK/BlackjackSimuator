@@ -11,8 +11,10 @@ import com.blackjack.model.player.Player;
 
 @Component
 public class PlayerFactory {
-
     public Player createPlayer(String name, double money, String type) {
+        if (type == null) {
+            type = "default";
+        }
         return switch (type.toLowerCase()) {
             case "aggressive" -> new AggressivePlayer(name, money);
             case "passive" -> new PassivePlayer(name, money);

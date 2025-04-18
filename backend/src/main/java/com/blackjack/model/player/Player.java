@@ -9,16 +9,16 @@ import com.blackjack.model.Hand;
 import com.blackjack.service.strategy.PlayerStrategy;
 
 public abstract class Player {
-    protected String id;
-    protected String name;
-    protected double money;
-    protected double currentBet;
-    protected Hand hand;
-    protected boolean active;
-    protected int wins;
-    protected int losses;
-    protected PlayerStrategy strategy;
-    protected String roundResult;
+    private final String id;
+    private String name;
+    private double money;
+    private double currentBet;
+    private final Hand hand;
+    private boolean active;
+    private int wins;
+    private int losses;
+    private PlayerStrategy strategy;
+    private String roundResult;
 
     public Player(String name, double money, PlayerStrategy strategy) {
         this.id = UUID.randomUUID().toString();
@@ -33,8 +33,10 @@ public abstract class Player {
         this.roundResult = null;
     }
 
+    // Abstract method for strategy-based decision
     public abstract boolean decideToHit(Card dealerUpCard, GameState gameState);
 
+    // Game actions
     public void win(double amount) {
         money += amount;
         wins++;
@@ -46,7 +48,7 @@ public abstract class Player {
     }
 
     public void push() {
-        // No-op by default
+        // No money changes, but could be logged or extended
     }
 
     public void resetHand() {
@@ -55,11 +57,11 @@ public abstract class Player {
     }
 
     public void resetRecord() {
-        this.wins = 0;
-        this.losses = 0;
+        wins = 0;
+        losses = 0;
     }
 
-    // Getters
+    // Accessors
     public String getId() {
         return id;
     }
@@ -83,11 +85,6 @@ public abstract class Player {
     public boolean isActive() {
         return active;
     }
-
-    public String getPlayerType() {
-        return strategy.getType();
-    }
-    
 
     public int getWins() {
         return wins;
@@ -113,7 +110,11 @@ public abstract class Player {
         return strategy;
     }
 
-    // Setters
+    public String getPlayerType() {
+        return strategy.getType();
+    }
+
+    // Mutators
     public void setMoney(double money) {
         this.money = money;
     }

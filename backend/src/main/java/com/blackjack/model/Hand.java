@@ -1,7 +1,7 @@
-
 package com.blackjack.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Hand {
@@ -12,33 +12,32 @@ public class Hand {
     }
 
     public void addCard(Card card) {
+        if (card == null) throw new IllegalArgumentException("Card cannot be null");
         cards.add(card);
     }
 
     public List<Card> getCards() {
-        return cards;
+        return Collections.unmodifiableList(cards); // Prevent external mutation
     }
 
     public int getValue() {
         int total = 0;
-        int aces = 0;
+        int aceCount = 0;
 
         for (Card card : cards) {
             total += card.getNumericValue();
-            if (card.getValue().equals("A")) aces++;
+            if ("A".equals(card.getValue())) {
+                aceCount++;
+            }
         }
 
-        // Adjust for Aces
-        while (total > 21 && aces > 0) {
+        // Adjust for Aces: reduce from 11 to 1 if total exceeds 21
+        while (total > 21 && aceCount > 0) {
             total -= 10;
-            aces--;
+            aceCount--;
         }
 
         return total;
-    }
-
-    public void clear() {
-        cards.clear();
     }
 
     public boolean isBust() {
@@ -47,5 +46,9 @@ public class Hand {
 
     public boolean isBlackjack() {
         return cards.size() == 2 && getValue() == 21;
+    }
+
+    public void clear() {
+        cards.clear();
     }
 }

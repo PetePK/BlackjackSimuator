@@ -1,22 +1,20 @@
-
 package com.blackjack.service;
 
-import com.blackjack.model.Dealer;
 import org.springframework.stereotype.Service;
+
+import com.blackjack.model.Dealer;
+import com.blackjack.model.GameState;
 
 @Service
 public class DealerService {
-    private final Dealer dealer;
 
-    public DealerService() {
-        this.dealer = new Dealer();
-    }
+    private final GameState gameState;
 
-    public void resetHand() {
-        dealer.resetHand();
+    public DealerService(GameState gameState) {
+        this.gameState = gameState;
     }
 
     public Dealer getDealer() {
-        return dealer;
+        return gameState.getDealer();
     }
 }

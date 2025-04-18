@@ -12,8 +12,11 @@ public class PassivePlayer extends Player {
 
     @Override
     public boolean decideToHit(Card dealerUpCard, GameState gameState) {
-        int count = gameState.getDeck().getCardCount();
-        int cardsRemaining = gameState.getDeck().cardsRemaining();
-        return strategy.shouldHit(hand.getCards(), dealerUpCard, count, cardsRemaining);
+        return getStrategy().shouldHit(
+            getHand().getCards(),
+            dealerUpCard,
+            gameState.getRunningCount(),
+            gameState.getDeck().cardsRemaining()
+        );
     }
 }

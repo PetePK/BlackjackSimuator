@@ -12,7 +12,11 @@ public class DefaultPlayer extends Player {
 
     @Override
     public boolean decideToHit(Card dealerUpCard, GameState gameState) {
-        int count = gameState.getDeck().getCardCount();
-        return strategy.shouldHit(hand.getCards(), dealerUpCard, count, gameState.getDeck().cardsRemaining());
+        return getStrategy().shouldHit(
+            getHand().getCards(),
+            dealerUpCard,
+            gameState.getRunningCount(),
+            gameState.getDeck().cardsRemaining()
+        );
     }
 }

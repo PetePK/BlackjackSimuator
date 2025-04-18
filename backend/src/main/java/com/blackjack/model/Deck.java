@@ -7,7 +7,7 @@ import java.util.List;
 public final class Deck {
     private static final int DECK_COUNT = 6;
     private final List<Card> cards;
-    private int cardCount = 0;
+    private int cardCount;
 
     public Deck() {
         this.cards = new ArrayList<>();
@@ -23,9 +23,6 @@ public final class Deck {
 
         for (String suit : suits) {
             for (String value : values) {
-                if (value == null) {
-                    throw new IllegalArgumentException("Card value cannot be null");
-                }
                 int numericValue = switch (value) {
                     case "A" -> 11;
                     case "J", "Q", "K" -> 10;
@@ -43,7 +40,7 @@ public final class Deck {
 
     public Card draw() {
         if (cardsRemaining() < 52) {
-            shuffle();
+            shuffle(); // Auto reshuffle when fewer than 1 deck remains
         }
         return cards.get(cardCount++);
     }

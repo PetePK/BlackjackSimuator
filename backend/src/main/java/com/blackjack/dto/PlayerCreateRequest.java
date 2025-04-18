@@ -5,6 +5,7 @@ public class PlayerCreateRequest {
     private double money;
     private String playerType;
 
+    // Getters
     public String getName() {
         return name;
     }
@@ -17,6 +18,7 @@ public class PlayerCreateRequest {
         return playerType;
     }
 
+    // Setters
     public void setName(String name) {
         this.name = name;
     }

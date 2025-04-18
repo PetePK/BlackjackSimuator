@@ -14,15 +14,15 @@ import com.blackjack.model.player.Player;
 public class PlayerService {
 
     private final GameState gameState;
-    private final PlayerFactory factory;
+    private final PlayerFactory playerFactory;
 
-    public PlayerService(GameState gameState, PlayerFactory factory) {
+    public PlayerService(GameState gameState, PlayerFactory playerFactory) {
         this.gameState = gameState;
-        this.factory = factory;
+        this.playerFactory = playerFactory;
     }
 
     public Player addPlayer(String name, double money, String type) {
-        Player player = factory.createPlayer(name, money, type);
+        Player player = playerFactory.createPlayer(name, money, type);
         System.out.println("ADDING PLAYER: " + player.getName() + " (" + type + ")");
         gameState.getPlayers().add(player);
         return player;
@@ -48,28 +48,32 @@ public class PlayerService {
 
     public void resetAllPlayers() {
         for (Player player : gameState.getPlayers()) {
-            player.setMoney(2000);
-            player.setCurrentBet(10);
-            player.resetHand();
-            player.setActive(true);
-            player.resetRecord();
-
-            if (player instanceof CardCounterPlayer counter) {
-                counter.resetCount();
-            }
+            resetPlayerDefaults(player);
         }
     }
 
     public void updatePlayer(String id, String name, double money, String playerType) {
-        Optional<Player> optionalPlayer = getPlayer(id);
-        if (optionalPlayer.isEmpty()) return;
+        Optional<Player> optional = getPlayer(id);
+        if (optional.isEmpty()) return;
 
-        Player player = optionalPlayer.get();
+        Player player = optional.get();
         player.setName(name);
         player.setMoney(money);
 
-        // Update strategy dynamically
-        Player newVersion = factory.createPlayer(name, money, playerType);
-        player.setStrategy(newVersion.getStrategy());
+        // Dynamically update strategy
+        Player updated = playerFactory.createPlayer(name, money, playerType);
+        player.setStrategy(updated.getStrategy());
+    }
+
+    private void resetPlayerDefaults(Player player) {
+        player.setMoney(2000);
+        player.setCurrentBet(10);
+        player.resetHand();
+        player.resetRecord();
+        player.setActive(true);
+
+        if (player instanceof CardCounterPlayer counter) {
+            counter.resetCount();
+        }
     }
 }

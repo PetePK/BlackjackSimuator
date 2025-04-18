@@ -8,8 +8,8 @@ public class AggressiveStrategy implements PlayerStrategy {
 
     @Override
     public boolean shouldHit(List<Card> hand, Card dealerUpCard, int count, int cardsRemaining) {
-        int value = hand.stream().mapToInt(Card::getNumericValue).sum();
-        return value < 18; // Aggressive: hit more often
+        int total = hand.stream().mapToInt(Card::getNumericValue).sum();
+        return total < 19; // Aggressive players keep hitting until 19
     }
 
     @Override

@@ -20,8 +20,8 @@ public class GameService {
     }
 
     public void playRound() {
-        Deck deck = gameState.getDeck();
         Dealer dealer = gameState.getDealer();
+        Deck deck = gameState.getDeck();
         List<Player> players = gameState.getPlayers();
 
         dealer.resetHand();
@@ -32,50 +32,53 @@ public class GameService {
         Card dealerUpCard = dealer.getHand().getCards().get(0);
 
         for (Player player : players) {
-            if (!player.isActive()) {
-                continue;
-            }
+            if (!player.isActive()) continue;
+
             while (!player.getHand().isBust()
                     && shouldPlayerHit(player, dealerUpCard)
                     && player.getHand().getCards().size() < 5) {
-                Card card = deck.draw();
-                player.getHand().addCard(card);
-                countCard(card);
+                drawAndAddCard(deck, player);
             }
         }
 
         while (dealer.getHand().getValue() < 17) {
-            Card card = deck.draw();
-            dealer.getHand().addCard(card);
-            countCard(card);
+            drawAndAddCard(deck, dealer);
         }
 
-        resolveRoundResults(players, dealer.getHand().getValue());
-
+        settleBets(players, dealer.getHand().getValue());
         gameState.incrementRound();
     }
 
     private void dealInitialCards(Deck deck, Dealer dealer, List<Player> players) {
         for (int i = 0; i < 2; i++) {
             for (Player player : players) {
-                if (!player.isActive()) {
-                    continue;
-                }
-                Card card = deck.draw();
-                player.getHand().addCard(card);
-                countCard(card);
+                if (!player.isActive()) continue;
+                drawAndAddCard(deck, player);
             }
-            Card dealerCard = deck.draw();
-            dealer.getHand().addCard(dealerCard);
-            countCard(dealerCard);
+            drawAndAddCard(deck, dealer);
         }
     }
 
-    private void resolveRoundResults(List<Player> players, int dealerValue) {
+    private void drawAndAddCard(Deck deck, Player player) {
+        Card card = deck.draw();
+        player.getHand().addCard(card);
+        countCard(card);
+    }
+
+    private void drawAndAddCard(Deck deck, Dealer dealer) {
+        Card card = deck.draw();
+        dealer.getHand().addCard(card);
+        countCard(card);
+    }
+
+    private boolean shouldPlayerHit(Player player, Card dealerUpCard) {
+        return player.decideToHit(dealerUpCard, gameState);
+    }
+
+    private void settleBets(List<Player> players, int dealerValue) {
         for (Player player : players) {
-            if (!player.isActive()) {
-                continue;
-            }
+            if (!player.isActive()) continue;
+
             int playerValue = player.getHand().getValue();
 
             if (player.getHand().isBust()) {
@@ -92,10 +95,6 @@ public class GameService {
                 player.setRoundResult("push");
             }
         }
-    }
-
-    private boolean shouldPlayerHit(Player player, Card dealerUpCard) {
-        return player.decideToHit(dealerUpCard, gameState);
     }
 
     private void countCard(Card card) {

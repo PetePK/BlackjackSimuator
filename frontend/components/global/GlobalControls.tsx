@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Play, FastForward, RotateCcw, XCircle } from "lucide-react";
@@ -17,7 +17,7 @@ export function GlobalControls({
 }: GlobalControlsProps) {
   const [isSimulating, setIsSimulating] = useState(false);
   const [currentSimRound, setCurrentSimRound] = useState(0);
-  const [cancelRequested, setCancelRequested] = useState(false);
+  const cancelRef = useRef(false); // ✅ ref ensures proper closure handling
 
   const handlePlay = async () => {
     await playRound();
@@ -26,24 +26,24 @@ export function GlobalControls({
 
   const handleFastForward = async () => {
     setIsSimulating(true);
-    setCancelRequested(false);
+    cancelRef.current = false;
 
     for (let i = 1; i <= 100; i++) {
-      if (cancelRequested) break;
+      if (cancelRef.current) break;
 
       setCurrentSimRound(i);
       await playRound();
-      refreshGameState();
-      await new Promise((resolve) => setTimeout(resolve, 100)); // 0.1s delay
+      await refreshGameState();
+      await new Promise((resolve) => setTimeout(resolve, 100));
     }
 
     setIsSimulating(false);
-    setCancelRequested(false);
     setCurrentSimRound(0);
+    cancelRef.current = false;
   };
 
   const handleCancel = () => {
-    setCancelRequested(true);
+    cancelRef.current = true;
   };
 
   return (

@@ -21,23 +21,35 @@ public class GameController {
         this.gameService = gameService;
     }
 
+    /**
+     * Plays a single round of Blackjack.
+     */
     @PostMapping("/round/play")
     public ResponseEntity<GameState> playRound() {
         gameService.playRound();
         return ResponseEntity.ok(gameService.getGameState());
     }
 
+    /**
+     * Resets the entire game state: players, deck, round, and dealer hand.
+     */
     @PostMapping("/reset")
     public ResponseEntity<GameState> resetGame() {
         gameService.resetGame();
         return ResponseEntity.ok(gameService.getGameState());
     }
 
+    /**
+     * Returns the current state of the game (players, dealer, deck, etc.)
+     */
     @GetMapping("/state")
-    public ResponseEntity<GameState> getState() {
+    public ResponseEntity<GameState> getGameState() {
         return ResponseEntity.ok(gameService.getGameState());
     }
 
+    /**
+     * Simulates multiple rounds with an optional delay between them.
+     */
     @PostMapping("/simulation/fastForward")
     public ResponseEntity<GameState> fastForward(@RequestBody SimulationRequest request) {
         gameService.fastForward(request.getRounds(), request.getSpeed());

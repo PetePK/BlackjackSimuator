@@ -17,7 +17,6 @@ public class Dealer {
         hand.clear();
     }
 
-    // ✅ Add these so frontend can access dealer cards directly
     public List<Card> getCards() {
         return hand.getCards();
     }

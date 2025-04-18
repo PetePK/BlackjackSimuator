@@ -19,11 +19,12 @@ public class GameState {
     public GameState() {
         this.players = new ArrayList<>();
         this.dealer = new Dealer();
-        this.deck = new Deck();
+        this.deck = new Deck(); // Default to 6 decks internally if needed
         this.currentRound = 0;
         this.runningCount = 0;
     }
 
+    // --- Players ---
     public List<Player> getPlayers() {
         return players;
     }
@@ -36,10 +37,11 @@ public class GameState {
         return players.removeIf(p -> p.getId().equals(playerId));
     }
 
-    public void resetPlayers() {
+    public void clearPlayers() {
         players.clear();
     }
 
+    // --- Dealer & Deck ---
     public Dealer getDealer() {
         return dealer;
     }
@@ -48,6 +50,7 @@ public class GameState {
         return deck;
     }
 
+    // --- Rounds ---
     public int getCurrentRound() {
         return currentRound;
     }
@@ -56,14 +59,7 @@ public class GameState {
         currentRound++;
     }
 
-    public void resetGame() {
-        resetPlayers();
-        dealer.resetHand();
-        deck.shuffle();
-        currentRound = 0;
-        runningCount = 0;
-    }
-
+    // --- Running Count ---
     public int getRunningCount() {
         return runningCount;
     }
@@ -75,4 +71,13 @@ public class GameState {
     public void incrementRunningCount(int value) {
         runningCount += value;
     }
-} 
+
+    // --- Full Game Reset ---
+    public void resetGame() {
+        clearPlayers();
+        dealer.resetHand();
+        deck.shuffle();
+        currentRound = 0;
+        runningCount = 0;
+    }
+}

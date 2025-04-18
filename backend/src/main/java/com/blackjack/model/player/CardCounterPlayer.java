@@ -14,8 +14,12 @@ public class CardCounterPlayer extends Player {
 
     @Override
     public boolean decideToHit(Card dealerUpCard, GameState gameState) {
-        int cardsRemaining = gameState.getDeck().cardsRemaining();
-        return strategy.shouldHit(hand.getCards(), dealerUpCard, runningCount, cardsRemaining);
+        return getStrategy().shouldHit(
+            getHand().getCards(),
+            dealerUpCard,
+            runningCount,
+            gameState.getDeck().cardsRemaining()
+        );
     }
 
     public void updateRunningCount(int delta) {

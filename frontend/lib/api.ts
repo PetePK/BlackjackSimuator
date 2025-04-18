@@ -7,7 +7,6 @@ export async function getGameState() {
 
 export async function playRound() {
   const res = await fetch(`${BASE_URL}/game/round/play`, { method: "POST" })
-  
   return res.json()
 }
 
@@ -21,8 +20,8 @@ export async function fastForward(rounds: number, speed: number) {
 }
 
 export async function resetPlayers() {
-  const res = await fetch(`${BASE_URL}/game/players/reset`, { method: "POST" })
-  return res.json()
+  const res = await fetch(`${BASE_URL}/players/reset`, { method: "POST" }) // ✅ fixed path
+  return res.ok // ✅ just a 200 response, no JSON
 }
 
 export async function addPlayer(name: string, money: number, playerType: string) {

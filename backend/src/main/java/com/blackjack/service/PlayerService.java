@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.blackjack.factory.PlayerFactory;
 import com.blackjack.model.GameState;
+import com.blackjack.model.player.CardCounterPlayer;
 import com.blackjack.model.player.Player;
 
 @Service
@@ -22,8 +23,8 @@ public class PlayerService {
 
     public Player addPlayer(String name, double money, String type) {
         Player player = factory.createPlayer(name, money, type);
-        System.out.println("✅ ADDING PLAYER: " + player.getName() + " (" + type + ")");
-        gameState.getPlayers().add(player); // 
+        System.out.println("ADDING PLAYER: " + player.getName() + " (" + type + ")");
+        gameState.getPlayers().add(player);
         return player;
     }
 
@@ -43,5 +44,19 @@ public class PlayerService {
 
     public void toggleActive(String id) {
         getPlayer(id).ifPresent(p -> p.setActive(!p.isActive()));
+    }
+
+    public void resetAllPlayers() {
+        for (Player player : gameState.getPlayers()) {
+            player.setMoney(2000);
+            player.setCurrentBet(10);
+            player.resetHand();
+            player.setActive(true);
+            player.resetRecord();
+
+            if (player instanceof CardCounterPlayer counter) {
+                counter.resetCount();
+            }
+        }
     }
 }

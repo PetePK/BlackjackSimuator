@@ -13,7 +13,7 @@ import com.blackjack.model.player.Player;
 @Service
 public class GameService {
 
-    private final GameState gameState; // ✅ Injected, not manually created
+    private final GameState gameState;
 
     public GameService(GameState gameState) {
         this.gameState = gameState;
@@ -27,46 +27,102 @@ public class GameService {
         dealer.resetHand();
         players.forEach(Player::resetHand);
 
-        for (int i = 0; i < 2; i++) {
-            for (Player player : players) {
-                if (player.isActive()) {
-                    player.getHand().addCard(deck.draw());
-                }
-            }
-            dealer.getHand().addCard(deck.draw());
-        }
+        dealInitialCards(deck, dealer, players);
 
         Card dealerUpCard = dealer.getHand().getCards().get(0);
 
         for (Player player : players) {
-            if (!player.isActive()) continue;
-            while (!player.getHand().isBust() &&
-                   player.decideToHit(dealerUpCard, deck.getCardCount())) {
-                player.getHand().addCard(deck.draw());
+            if (!player.isActive()) {
+                continue;
+            }
+            while (!player.getHand().isBust()
+                    && shouldPlayerHit(player, dealerUpCard)
+                    && player.getHand().getCards().size() < 5) {
+                Card card = deck.draw();
+                player.getHand().addCard(card);
+                countCard(card);
             }
         }
 
         while (dealer.getHand().getValue() < 17) {
-            dealer.getHand().addCard(deck.draw());
+            Card card = deck.draw();
+            dealer.getHand().addCard(card);
+            countCard(card);
         }
 
-        int dealerValue = dealer.getHand().getValue();
-
-        for (Player player : players) {
-            if (!player.isActive()) continue;
-            int playerValue = player.getHand().getValue();
-            if (player.getHand().isBust()) {
-                player.lose(player.getCurrentBet());
-            } else if (dealer.getHand().isBust() || playerValue > dealerValue) {
-                player.win(player.getCurrentBet());
-            } else if (playerValue < dealerValue) {
-                player.lose(player.getCurrentBet());
-            } else {
-                player.push();
-            }
-        }
+        resolveRoundResults(players, dealer.getHand().getValue());
 
         gameState.incrementRound();
+    }
+
+    private void dealInitialCards(Deck deck, Dealer dealer, List<Player> players) {
+        for (int i = 0; i < 2; i++) {
+            for (Player player : players) {
+                if (!player.isActive()) {
+                    continue;
+                }
+                Card card = deck.draw();
+                player.getHand().addCard(card);
+                countCard(card);
+            }
+            Card dealerCard = deck.draw();
+            dealer.getHand().addCard(dealerCard);
+            countCard(dealerCard);
+        }
+    }
+
+    private void resolveRoundResults(List<Player> players, int dealerValue) {
+        for (Player player : players) {
+            if (!player.isActive()) {
+                continue;
+            }
+            int playerValue = player.getHand().getValue();
+
+            if (player.getHand().isBust()) {
+                player.lose(player.getCurrentBet());
+                player.setRoundResult("loss");
+            } else if (dealerValue > 21 || playerValue > dealerValue) {
+                player.win(player.getCurrentBet());
+                player.setRoundResult("win");
+            } else if (playerValue < dealerValue) {
+                player.lose(player.getCurrentBet());
+                player.setRoundResult("loss");
+            } else {
+                player.push();
+                player.setRoundResult("push");
+            }
+        }
+    }
+
+    private boolean shouldPlayerHit(Player player, Card dealerUpCard) {
+        return player.decideToHit(dealerUpCard, gameState);
+    }
+
+    private void countCard(Card card) {
+        String value = card.getValue();
+        if (value.equals("2") || value.equals("3") || value.equals("4")
+                || value.equals("5") || value.equals("6")) {
+            gameState.incrementRunningCount(1);
+        } else if (value.equals("10") || value.equals("J") || value.equals("Q")
+                || value.equals("K") || value.equals("A")) {
+            gameState.incrementRunningCount(-1);
+        }
+    }
+
+    public void fastForward(int rounds, double speedInSeconds) {
+        for (int i = 0; i < rounds; i++) {
+            playRound();
+            System.out.println("✅ Completed round " + gameState.getCurrentRound());
+
+            if (speedInSeconds > 0) {
+                try {
+                    Thread.sleep((long) (speedInSeconds * 1000));
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
+        }
     }
 
     public void resetGame() {

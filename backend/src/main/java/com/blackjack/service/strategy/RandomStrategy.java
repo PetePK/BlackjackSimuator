@@ -10,9 +10,8 @@ public class RandomStrategy implements PlayerStrategy {
     private final Random random = new Random();
 
     @Override
-    public boolean shouldHit(List<Card> hand, Card dealerUpCard, int count) {
-        // Randomly decide to hit or stand
-        return random.nextBoolean(); // Returns true (hit) or false (stand)
+    public boolean shouldHit(List<Card> hand, Card dealerUpCard, int count, int cardsRemaining) {
+        return random.nextBoolean(); // Randomly decides to hit or stand
     }
 
     @Override

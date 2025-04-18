@@ -1,14 +1,20 @@
-
 package com.blackjack.controller;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.blackjack.dto.SimulationRequest;
 import com.blackjack.model.GameState;
 import com.blackjack.service.GameService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/game")
 public class GameController {
+
     private final GameService gameService;
 
     public GameController(GameService gameService) {
@@ -29,6 +35,12 @@ public class GameController {
 
     @GetMapping("/state")
     public ResponseEntity<GameState> getState() {
+        return ResponseEntity.ok(gameService.getGameState());
+    }
+
+    @PostMapping("/simulation/fastForward")
+    public ResponseEntity<GameState> fastForward(@RequestBody SimulationRequest request) {
+        gameService.fastForward(request.getRounds(), request.getSpeed());
         return ResponseEntity.ok(gameService.getGameState());
     }
 }

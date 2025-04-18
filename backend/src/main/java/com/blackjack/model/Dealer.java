@@ -3,7 +3,7 @@ package com.blackjack.model;
 import java.util.List;
 
 public class Dealer {
-    private Hand hand;
+    private final Hand hand;
 
     public Dealer() {
         this.hand = new Hand();

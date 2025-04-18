@@ -1,8 +1,6 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import type { Player } from "@/lib/types"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -14,8 +12,8 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { PlayingCard } from "./PlayingCard"
-import { Edit, Trash2, Eye, Power } from "lucide-react"
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+import { Edit, Trash2, Power } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
 
 interface PlayerCardProps {
   player: Player
@@ -32,9 +30,7 @@ export function PlayerCard({
 }: PlayerCardProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [editedPlayer, setEditedPlayer] = useState<Player>(player)
-  const [historyOpen, setHistoryOpen] = useState(false)
 
-  // ✨ Sync edited player when props update
   useEffect(() => {
     setEditedPlayer(player)
   }, [player])
@@ -49,37 +45,8 @@ export function PlayerCard({
     setIsEditing(false)
   }
 
-  // ✨ Format playerType for user-friendly display
-  const formatPlayerType = (type?: string): string => {
-    const normalized = (type || "default").toLowerCase()
-
-    switch (normalized) {
-      case "default":
-      case "default (random)":
-        return "Default (Random)"
-      case "aggressive":
-        return "Aggressive"
-      case "passive":
-        return "Passive"
-      case "optimal":
-      case "strategy base player":
-      case "tactician":
-      case "strategist":
-        return "Strategy Base Player"
-      case "card counter":
-      case "counter":
-        return "Card Counter"
-      default:
-        return type || "Default"
-    }
-  }
-
-  const playerCards = Array.isArray(player.cards) && player.cards.length > 0
-    ? player.cards
-    : [
-        { suit: "diamonds", value: "7" },
-        { suit: "clubs", value: "K" },
-      ]
+  const playerCards =
+    Array.isArray(player.cards) && player.cards.length > 0 ? player.cards : []
 
   return (
     <Card
@@ -140,7 +107,10 @@ export function PlayerCard({
             </div>
 
             <div className="flex space-x-2 pt-2">
-              <Button onClick={handleSave} className="bg-emerald-700 hover:bg-emerald-600 text-white">
+              <Button
+                onClick={handleSave}
+                className="bg-emerald-700 hover:bg-emerald-600 text-white"
+              >
                 Save
               </Button>
               <Button
@@ -187,7 +157,8 @@ export function PlayerCard({
             </div>
 
             <div className="text-gray-300 text-sm">
-              Player Type: {formatPlayerType(player.playerType)}
+              Player Type:{" "}
+              <span className="text-white font-medium">{player.playerType}</span>
             </div>
 
             <div className="bg-emerald-950 rounded-md p-3 space-y-2 text-sm">
@@ -201,15 +172,32 @@ export function PlayerCard({
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-300">Record:</span>
-                <span className="text-white font-bold">W: {player.wins} / L: {player.losses}</span>
+                <span className="text-white font-bold">
+                  W: {player.wins} / L: {player.losses}
+                </span>
               </div>
             </div>
 
             <div>
-              <div className="text-gray-300 mb-1">Current Hand:</div>
+              <div className="flex justify-between items-center mb-1">
+                <span className="text-gray-300">Current Hand:</span>
+                {player.roundResult && (
+                  <Badge
+                    className={`${
+                      player.roundResult === "win"
+                        ? "bg-green-500 hover:bg-green-600"
+                        : player.roundResult === "loss"
+                        ? "bg-red-500 hover:bg-red-600"
+                        : "bg-gray-500 hover:bg-gray-600"
+                    } text-white font-medium`}
+                  >
+                    {player.roundResult.toUpperCase()}
+                  </Badge>
+                )}
+              </div>
               <div className="flex justify-center gap-1">
-                {playerCards.map((card, idx) => (
-                  <PlayingCard key={idx} card={card} small />
+                {playerCards.map((card, index) => (
+                  <PlayingCard key={index} card={card} small />
                 ))}
               </div>
               <div className="text-center mt-1 text-white font-bold">
@@ -219,32 +207,6 @@ export function PlayerCard({
           </>
         )}
       </CardContent>
-
-      {!isEditing && (
-        <CardFooter className="p-2 bg-emerald-950 rounded-b-lg">
-          <Collapsible open={historyOpen} onOpenChange={setHistoryOpen}>
-            <CollapsibleTrigger asChild>
-              <Button
-                variant="ghost"
-                className="w-full text-white hover:bg-emerald-800 flex items-center justify-center"
-              >
-                <Eye className="h-4 w-4 mr-2" />
-                {historyOpen ? "Hide History" : "View Hand History"}
-              </Button>
-            </CollapsibleTrigger>
-            <CollapsibleContent className="mt-2 p-2 bg-emerald-900 rounded text-sm text-white">
-              <div className="space-y-1">
-                <div className="flex justify-between">
-                  <span>Hand #1:</span><span className="text-green-400">Win (+$50)</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Hand #2:</span><span className="text-red-400">Loss (-$50)</span>
-                </div>
-              </div>
-            </CollapsibleContent>
-          </Collapsible>
-        </CardFooter>
-      )}
     </Card>
   )
 }

@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Deck {
-    private List<Card> cards;
+public final class Deck {
+    private static final int DECK_COUNT = 6;
+    private final List<Card> cards;
     private int cardCount = 0;
 
-    public Deck(int numberOfDecks) {
+    public Deck() {
         this.cards = new ArrayList<>();
-        for (int i = 0; i < numberOfDecks; i++) {
+        for (int i = 0; i < DECK_COUNT; i++) {
             initializeDeck();
         }
         shuffle();
@@ -38,7 +39,7 @@ public class Deck {
     }
 
     public Card draw() {
-        if (cardsRemaining() < 52) { // 👈 reshuffle when < 1 deck left
+        if (cardsRemaining() < 52) {
             shuffle();
         }
         return cards.get(cardCount++);
@@ -50,5 +51,13 @@ public class Deck {
 
     public int getCardCount() {
         return cardCount;
+    }
+
+    public int getDeckCount() {
+        return DECK_COUNT;
+    }
+
+    public int getTotalCards() {
+        return cards.size();
     }
 }

@@ -1,40 +1,38 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { PlayingCard } from "@/components/players/PlayingCard"
-import { RefreshCw, Eye } from "lucide-react"
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
-import { Badge } from "@/components/ui/badge"
-import { shuffleDeck, getDealerHistory } from "@/lib/api"
-import type { Card as PlayingCardType } from "@/lib/types"
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { PlayingCard } from "@/components/players/PlayingCard";
+import { RefreshCw, Eye } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { shuffleDeck, getDealerHistory } from "@/lib/api";
+import type { Card as PlayingCardType } from "@/lib/types";
 
 interface DealerSectionProps {
-  currentCardCount: number
   dealer: {
-    cards: PlayingCardType[]
-    handValue: number
-  }
+    cards: PlayingCardType[];
+    handValue: number;
+  };
 }
 
-export function DealerSection({ currentCardCount, dealer }: DealerSectionProps) {
-  const [historyOpen, setHistoryOpen] = useState(false)
-  const [dealerHistory, setDealerHistory] = useState<{ round: number; netProfit: number }[]>([])
+export function DealerSection({ dealer }: DealerSectionProps) {
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [dealerHistory, setDealerHistory] = useState<{ round: number; netProfit: number }[]>([]);
 
   const fetchHistory = async () => {
-    const data = await getDealerHistory()
-    setDealerHistory(data.history || [])
-  }
+    const data = await getDealerHistory();
+    setDealerHistory(data.history || []);
+  };
 
   useEffect(() => {
-    if (historyOpen) fetchHistory()
-  }, [historyOpen])
+    if (historyOpen) fetchHistory();
+  }, [historyOpen]);
 
   const handleShuffle = async () => {
-    await shuffleDeck()
-    location.reload()
-  }
+    await shuffleDeck();
+    location.reload();
+  };
 
   return (
     <Card className="bg-emerald-900 border-emerald-600 shadow-lg">
@@ -42,9 +40,6 @@ export function DealerSection({ currentCardCount, dealer }: DealerSectionProps) 
         <div className="flex flex-col items-center space-y-4">
           <div className="flex items-center justify-between w-full">
             <h2 className="text-2xl font-bold text-white">Dealer</h2>
-            <Badge variant="outline" className="bg-emerald-700 text-white border-emerald-500">
-              Card Count: {currentCardCount}
-            </Badge>
           </div>
 
           <div className="flex flex-wrap justify-center gap-2">
@@ -98,5 +93,5 @@ export function DealerSection({ currentCardCount, dealer }: DealerSectionProps) 
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

@@ -35,6 +35,12 @@ public class PlayerController {
         return ResponseEntity.ok(player);
     }
 
+    @PostMapping("/reset")
+    public ResponseEntity<Void> resetAllPlayers() {
+        playerService.resetAllPlayers();
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping
     public ResponseEntity<?> getAllPlayers() {
         return ResponseEntity.ok(playerService.getAllPlayers());

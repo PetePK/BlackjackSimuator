@@ -14,15 +14,16 @@ public class GameState {
     private final Dealer dealer;
     private final Deck deck;
     private int currentRound;
+    private int runningCount;
 
     public GameState() {
         this.players = new ArrayList<>();
         this.dealer = new Dealer();
-        this.deck = new Deck(6); // 👈 Use 6 decks for realistic shoe
+        this.deck = new Deck();
         this.currentRound = 0;
+        this.runningCount = 0;
     }
 
-    // 🔹 Players
     public List<Player> getPlayers() {
         return players;
     }
@@ -39,17 +40,14 @@ public class GameState {
         players.clear();
     }
 
-    // 🔹 Dealer
     public Dealer getDealer() {
         return dealer;
     }
 
-    // 🔹 Deck
     public Deck getDeck() {
         return deck;
     }
 
-    // 🔹 Rounds
     public int getCurrentRound() {
         return currentRound;
     }
@@ -58,11 +56,23 @@ public class GameState {
         currentRound++;
     }
 
-    // 🔹 Full reset
     public void resetGame() {
         resetPlayers();
         dealer.resetHand();
         deck.shuffle();
         currentRound = 0;
+        runningCount = 0;
     }
-}
+
+    public int getRunningCount() {
+        return runningCount;
+    }
+
+    public void resetRunningCount() {
+        runningCount = 0;
+    }
+
+    public void incrementRunningCount(int value) {
+        runningCount += value;
+    }
+} 

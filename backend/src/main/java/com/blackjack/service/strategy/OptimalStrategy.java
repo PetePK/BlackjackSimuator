@@ -7,10 +7,9 @@ import com.blackjack.model.Card;
 public class OptimalStrategy implements PlayerStrategy {
 
     @Override
-    public boolean shouldHit(List<Card> hand, Card dealerUpCard, int count) {
+    public boolean shouldHit(List<Card> hand, Card dealerUpCard, int count, int cardsRemaining) {
         int total = hand.stream().mapToInt(Card::getNumericValue).sum();
         boolean hasAce = hand.stream().anyMatch(card -> card.getValue().equals("A"));
-
         int dealerValue = dealerUpCard.getNumericValue();
 
         if (hasAce && total <= 21) {

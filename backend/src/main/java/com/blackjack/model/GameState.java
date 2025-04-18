@@ -10,15 +10,15 @@ import com.blackjack.model.player.Player;
 @Component
 public class GameState {
 
-    private List<Player> players;
-    private Dealer dealer;
-    private Deck deck;
+    private final List<Player> players;
+    private final Dealer dealer;
+    private final Deck deck;
     private int currentRound;
 
     public GameState() {
         this.players = new ArrayList<>();
         this.dealer = new Dealer();
-        this.deck = new Deck();
+        this.deck = new Deck(6); // 👈 Use 6 decks for realistic shoe
         this.currentRound = 0;
     }
 

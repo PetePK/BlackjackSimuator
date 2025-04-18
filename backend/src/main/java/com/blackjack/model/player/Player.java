@@ -1,10 +1,11 @@
-
 package com.blackjack.model.player;
+
+import java.util.List;
+import java.util.UUID;
 
 import com.blackjack.model.Card;
 import com.blackjack.model.Hand;
 import com.blackjack.service.strategy.PlayerStrategy;
-import java.util.UUID;
 
 public abstract class Player {
     protected String id;
@@ -60,4 +61,13 @@ public abstract class Player {
     // Setters
     public void setActive(boolean active) { this.active = active; }
     public void setCurrentBet(double currentBet) { this.currentBet = currentBet; }
+
+    // ✅ These make it easier for frontend to access card data
+    public List<Card> getCards() {
+        return hand.getCards();
+    }
+
+    public int getHandValue() {
+        return hand.getValue();
+    }
 }

@@ -7,6 +7,7 @@ export async function getGameState() {
 
 export async function playRound() {
   const res = await fetch(`${BASE_URL}/game/round/play`, { method: "POST" })
+  
   return res.json()
 }
 

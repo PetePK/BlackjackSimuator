@@ -5,7 +5,7 @@ import { DealerSection } from "./dealer/DealerSection"
 import { GlobalControls } from "./global/GlobalControls"
 import { PlayerGrid } from "./players/PlayerGrid"
 import { AddPlayerButton } from "./players/AddPlayerButton"
-import type { Player } from "@/lib/types"
+import type { Player, Card as PlayingCardType } from "@/lib/types"
 import {
   getGameState,
   addPlayer,
@@ -19,12 +19,17 @@ export function BlackjackSimulator() {
   const [players, setPlayers] = useState<Player[]>([])
   const [simulationSpeed, setSimulationSpeed] = useState(1)
   const [currentCardCount, setCurrentCardCount] = useState(0)
+  const [dealerCards, setDealerCards] = useState<PlayingCardType[]>([])
+  const [dealerHandValue, setDealerHandValue] = useState(0)
 
   const fetchState = async () => {
     const data = await getGameState()
     console.log("🎯 Full GameState from backend:", data)
+
     setPlayers(data.players || [])
     setCurrentCardCount(data.deck?.cardCount || 0)
+    setDealerCards(data.dealer?.cards || [])
+    setDealerHandValue(data.dealer?.handValue || 0)
   }
 
   useEffect(() => {
@@ -75,12 +80,19 @@ export function BlackjackSimulator() {
       <div className="max-w-7xl mx-auto space-y-6">
         <h1 className="text-3xl font-bold text-white text-center mb-6">Blackjack Simulator</h1>
 
-        <DealerSection currentCardCount={currentCardCount} />
+        <DealerSection
+          currentCardCount={currentCardCount}
+          dealer={{
+            cards: dealerCards,
+            handValue: dealerHandValue,
+          }}
+        />
 
         <GlobalControls
           simulationSpeed={simulationSpeed}
           setSimulationSpeed={setSimulationSpeed}
           resetAllPlayers={handleResetPlayers}
+          refreshGameState={fetchState}
         />
 
         <PlayerGrid

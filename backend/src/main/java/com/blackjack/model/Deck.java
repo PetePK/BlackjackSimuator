@@ -1,4 +1,3 @@
-
 package com.blackjack.model;
 
 import java.util.ArrayList;
@@ -9,9 +8,11 @@ public class Deck {
     private List<Card> cards;
     private int cardCount = 0;
 
-    public Deck() {
+    public Deck(int numberOfDecks) {
         this.cards = new ArrayList<>();
-        initializeDeck();
+        for (int i = 0; i < numberOfDecks; i++) {
+            initializeDeck();
+        }
         shuffle();
     }
 
@@ -37,7 +38,9 @@ public class Deck {
     }
 
     public Card draw() {
-        if (cardCount >= cards.size()) shuffle();
+        if (cardsRemaining() < 52) { // 👈 reshuffle when < 1 deck left
+            shuffle();
+        }
         return cards.get(cardCount++);
     }
 

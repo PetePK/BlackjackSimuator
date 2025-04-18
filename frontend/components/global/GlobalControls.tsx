@@ -10,21 +10,23 @@ interface GlobalControlsProps {
   simulationSpeed: number
   setSimulationSpeed: (speed: number) => void
   resetAllPlayers: () => void
+  refreshGameState: () => void // ✅ New prop
 }
 
 export function GlobalControls({
   simulationSpeed,
   setSimulationSpeed,
   resetAllPlayers,
+  refreshGameState,
 }: GlobalControlsProps) {
   const handlePlay = async () => {
     await playRound()
-    location.reload()
+    refreshGameState() // ✅ no reload
   }
 
   const handleFastForward = async () => {
     await fastForward(100, simulationSpeed)
-    location.reload()
+    refreshGameState() // ✅ no reload
   }
 
   return (

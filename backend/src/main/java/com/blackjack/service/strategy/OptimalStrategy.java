@@ -1,10 +1,11 @@
-
 package com.blackjack.service.strategy;
 
-import com.blackjack.model.Card;
 import java.util.List;
 
+import com.blackjack.model.Card;
+
 public class OptimalStrategy implements PlayerStrategy {
+
     @Override
     public boolean shouldHit(List<Card> hand, Card dealerUpCard, int count) {
         int total = hand.stream().mapToInt(Card::getNumericValue).sum();
@@ -24,5 +25,10 @@ public class OptimalStrategy implements PlayerStrategy {
             if (total >= 13 && total <= 16) return dealerValue >= 7;
             return false;
         }
+    }
+
+    @Override
+    public String getType() {
+        return "optimal";
     }
 }

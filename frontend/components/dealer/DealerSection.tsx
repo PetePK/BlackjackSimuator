@@ -8,20 +8,19 @@ import { RefreshCw, Eye } from "lucide-react"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { Badge } from "@/components/ui/badge"
 import { shuffleDeck, getDealerHistory } from "@/lib/api"
+import type { Card as PlayingCardType } from "@/lib/types"
 
 interface DealerSectionProps {
   currentCardCount: number
+  dealer: {
+    cards: PlayingCardType[]
+    handValue: number
+  }
 }
 
-export function DealerSection({ currentCardCount }: DealerSectionProps) {
+export function DealerSection({ currentCardCount, dealer }: DealerSectionProps) {
   const [historyOpen, setHistoryOpen] = useState(false)
   const [dealerHistory, setDealerHistory] = useState<{ round: number; netProfit: number }[]>([])
-
-  const dealerCards = [
-    { suit: "hearts", value: "A" },
-    { suit: "spades", value: "10" },
-  ]
-  const dealerValue = 21
 
   const fetchHistory = async () => {
     const data = await getDealerHistory()
@@ -49,12 +48,14 @@ export function DealerSection({ currentCardCount }: DealerSectionProps) {
           </div>
 
           <div className="flex flex-wrap justify-center gap-2">
-            {dealerCards.map((card, index) => (
+            {dealer.cards.map((card, index) => (
               <PlayingCard key={index} card={card} />
             ))}
           </div>
 
-          <div className="text-xl font-semibold text-white">Hand Value: {dealerValue}</div>
+          <div className="text-xl font-semibold text-white">
+            Hand Value: {dealer.handValue}
+          </div>
 
           <div className="flex gap-2 w-full">
             <Button

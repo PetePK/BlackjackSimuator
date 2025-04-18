@@ -23,6 +23,9 @@ public final class Deck {
 
         for (String suit : suits) {
             for (String value : values) {
+                if (value == null) {
+                    throw new IllegalArgumentException("Card value cannot be null");
+                }
                 int numericValue = switch (value) {
                     case "A" -> 11;
                     case "J", "Q", "K" -> 10;

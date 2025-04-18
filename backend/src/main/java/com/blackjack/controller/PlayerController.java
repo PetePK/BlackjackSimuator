@@ -58,6 +58,19 @@ public class PlayerController {
         return removed ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Player> updatePlayer(@PathVariable String id, @RequestBody Map<String, Object> payload) {
+        String name = (String) payload.get("name");
+        double money = ((Number) payload.get("money")).doubleValue();
+        String type = (String) payload.get("playerType");
+
+        playerService.updatePlayer(id, name, money, type);
+
+        return playerService.getPlayer(id)
+            .map(ResponseEntity::ok)
+            .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
     @PutMapping("/{id}/toggle")
     public ResponseEntity<Void> toggleActive(@PathVariable String id) {
         playerService.toggleActive(id);

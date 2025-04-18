@@ -46,7 +46,7 @@ public abstract class Player {
     }
 
     public void push() {
-        // no-op by default
+        // No-op by default
     }
 
     public void resetHand() {
@@ -60,22 +60,81 @@ public abstract class Player {
     }
 
     // Getters
-    public String getId() { return id; }
-    public String getName() { return name; }
-    public double getMoney() { return money; }
-    public double getCurrentBet() { return currentBet; }
-    public Hand getHand() { return hand; }
-    public boolean isActive() { return active; }
-    public int getWins() { return wins; }
-    public int getLosses() { return losses; }
-    public String getRoundResult() { return roundResult; }
+    public String getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getMoney() {
+        return money;
+    }
+
+    public double getCurrentBet() {
+        return currentBet;
+    }
+
+    public Hand getHand() {
+        return hand;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public String getPlayerType() {
+        return strategy.getType();
+    }
+    
+
+    public int getWins() {
+        return wins;
+    }
+
+    public int getLosses() {
+        return losses;
+    }
+
+    public String getRoundResult() {
+        return roundResult;
+    }
+
+    public List<Card> getCards() {
+        return hand.getCards();
+    }
+
+    public int getHandValue() {
+        return hand.getValue();
+    }
+
+    public PlayerStrategy getStrategy() {
+        return strategy;
+    }
 
     // Setters
-    public void setMoney(double money) { this.money = money; }
-    public void setCurrentBet(double currentBet) { this.currentBet = currentBet; }
-    public void setActive(boolean active) { this.active = active; }
-    public void setRoundResult(String result) { this.roundResult = result; }
+    public void setMoney(double money) {
+        this.money = money;
+    }
 
-    public List<Card> getCards() { return hand.getCards(); }
-    public int getHandValue() { return hand.getValue(); }
+    public void setCurrentBet(double currentBet) {
+        this.currentBet = currentBet;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public void setRoundResult(String result) {
+        this.roundResult = result;
+    }
+
+    public void setStrategy(PlayerStrategy strategy) {
+        this.strategy = strategy;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

@@ -45,8 +45,18 @@ export function PlayerCard({
     setIsEditing(false)
   }
 
-  const playerCards =
-    Array.isArray(player.cards) && player.cards.length > 0 ? player.cards : []
+  const formatPlayerType = (type: string) => {
+    switch (type) {
+      case "default": return "Default (Random)"
+      case "aggressive": return "Aggressive"
+      case "passive": return "Passive"
+      case "optimal": return "Strategy Base Player"
+      case "card counter": return "Card Counter"
+      default: return type
+    }
+  }
+
+  const playerCards = Array.isArray(player.cards) ? player.cards : []
 
   return (
     <Card
@@ -158,7 +168,9 @@ export function PlayerCard({
 
             <div className="text-gray-300 text-sm">
               Player Type:{" "}
-              <span className="text-white font-medium">{player.playerType}</span>
+              <span className="text-white font-medium">
+                {formatPlayerType(player.playerType)}
+              </span>
             </div>
 
             <div className="bg-emerald-950 rounded-md p-3 space-y-2 text-sm">

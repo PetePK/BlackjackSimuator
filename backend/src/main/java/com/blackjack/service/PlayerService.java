@@ -59,4 +59,17 @@ public class PlayerService {
             }
         }
     }
+
+    public void updatePlayer(String id, String name, double money, String playerType) {
+        Optional<Player> optionalPlayer = getPlayer(id);
+        if (optionalPlayer.isEmpty()) return;
+
+        Player player = optionalPlayer.get();
+        player.setName(name);
+        player.setMoney(money);
+
+        // Update strategy dynamically
+        Player newVersion = factory.createPlayer(name, money, playerType);
+        player.setStrategy(newVersion.getStrategy());
+    }
 }

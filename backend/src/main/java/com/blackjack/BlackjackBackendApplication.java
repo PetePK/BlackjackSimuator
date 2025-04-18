@@ -1,11 +1,12 @@
-package com.backend;
+
+package com.blackjack;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BackendApplication {
+public class BlackjackBackendApplication {
     public static void main(String[] args) {
-        SpringApplication.run(BackendApplication.class, args);
+        SpringApplication.run(BlackjackBackendApplication.class, args);
     }
 }

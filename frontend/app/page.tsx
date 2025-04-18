@@ -1,4 +1,4 @@
-import { BlackjackSimulator } from "@/components/blackjack-simulator"
+import { BlackjackSimulator } from "@/components/BlackjackSimulator"
 
 export default function Home() {
   return (

@@ -1,12 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import type { Player } from "@/lib/types"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
 import {
   Select,
   SelectContent,
@@ -14,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { PlayingCard } from "./playing-card"
+import { PlayingCard } from "./PlayingCard"
 import { Edit, Trash2, Eye, Power } from "lucide-react"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 
@@ -35,17 +34,47 @@ export function PlayerCard({
   const [editedPlayer, setEditedPlayer] = useState<Player>(player)
   const [historyOpen, setHistoryOpen] = useState(false)
 
+  // ✨ Sync edited player when props update
+  useEffect(() => {
+    setEditedPlayer(player)
+  }, [player])
+
   const handleSave = () => {
     onUpdate(editedPlayer)
     setIsEditing(false)
   }
+
   const handleCancel = () => {
     setEditedPlayer(player)
     setIsEditing(false)
   }
 
-  // Sample cards while playing; real cards come via props if you extend
-  const playerCards = player.cards.length
+  // ✨ Format playerType for user-friendly display
+  const formatPlayerType = (type?: string): string => {
+    const normalized = (type || "default").toLowerCase()
+
+    switch (normalized) {
+      case "default":
+      case "default (random)":
+        return "Default (Random)"
+      case "aggressive":
+        return "Aggressive"
+      case "passive":
+        return "Passive"
+      case "optimal":
+      case "strategy base player":
+      case "tactician":
+      case "strategist":
+        return "Strategy Base Player"
+      case "card counter":
+      case "counter":
+        return "Card Counter"
+      default:
+        return type || "Default"
+    }
+  }
+
+  const playerCards = Array.isArray(player.cards) && player.cards.length > 0
     ? player.cards
     : [
         { suit: "diamonds", value: "7" },
@@ -63,13 +92,9 @@ export function PlayerCard({
       <CardContent className="p-4 space-y-4">
         {isEditing ? (
           <div className="space-y-3">
-            {/* Name */}
             <div>
-              <Label htmlFor={`name-${player.id}`} className="text-white">
-                Name
-              </Label>
+              <Label className="text-white">Name</Label>
               <Input
-                id={`name-${player.id}`}
                 value={editedPlayer.name}
                 onChange={(e) =>
                   setEditedPlayer({ ...editedPlayer, name: e.target.value })
@@ -78,13 +103,9 @@ export function PlayerCard({
               />
             </div>
 
-            {/* Money */}
             <div>
-              <Label htmlFor={`money-${player.id}`} className="text-white">
-                Starting Money
-              </Label>
+              <Label className="text-white">Starting Money</Label>
               <Input
-                id={`money-${player.id}`}
                 type="number"
                 value={editedPlayer.money}
                 onChange={(e) =>
@@ -97,71 +118,29 @@ export function PlayerCard({
               />
             </div>
 
-            {/* Strategy */}
             <div>
-              <Label htmlFor={`strategy-${player.id}`} className="text-white">
-                Strategy
-              </Label>
+              <Label className="text-white">Player Type</Label>
               <Select
-                value={editedPlayer.strategy}
+                value={editedPlayer.playerType}
                 onValueChange={(value) =>
-                  setEditedPlayer({ ...editedPlayer, strategy: value })
+                  setEditedPlayer({ ...editedPlayer, playerType: value })
                 }
               >
                 <SelectTrigger className="bg-emerald-800 border-emerald-600 text-white">
-                  <SelectValue placeholder="Select strategy" />
+                  <SelectValue placeholder="Select type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Conservative">
-                    Conservative
-                  </SelectItem>
-                  <SelectItem value="Aggressive">Aggressive</SelectItem>
-                  <SelectItem value="Random">Random</SelectItem>
+                  <SelectItem value="default">Default (Random)</SelectItem>
+                  <SelectItem value="aggressive">Aggressive</SelectItem>
+                  <SelectItem value="passive">Passive</SelectItem>
+                  <SelectItem value="optimal">Strategy Base Player</SelectItem>
+                  <SelectItem value="card counter">Card Counter</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
-            {/* Toggles */}
-            <div className="flex items-center justify-between">
-              <Label
-                htmlFor={`card-counting-${player.id}`}
-                className="text-white"
-              >
-                Card Counting
-              </Label>
-              <Switch
-                id={`card-counting-${player.id}`}
-                checked={editedPlayer.cardCounting}
-                onCheckedChange={(checked) =>
-                  setEditedPlayer({ ...editedPlayer, cardCounting: checked })
-                }
-              />
-            </div>
-            <div className="flex items-center justify-between">
-              <Label
-                htmlFor={`betting-strategy-${player.id}`}
-                className="text-white"
-              >
-                Betting Strategy
-              </Label>
-              <Switch
-                id={`betting-strategy-${player.id}`}
-                checked={editedPlayer.bettingStrategy}
-                onCheckedChange={(checked) =>
-                  setEditedPlayer({
-                    ...editedPlayer,
-                    bettingStrategy: checked,
-                  })
-                }
-              />
-            </div>
-
-            {/* Save/Cancel */}
             <div className="flex space-x-2 pt-2">
-              <Button
-                onClick={handleSave}
-                className="bg-emerald-700 hover:bg-emerald-600 text-white"
-              >
+              <Button onClick={handleSave} className="bg-emerald-700 hover:bg-emerald-600 text-white">
                 Save
               </Button>
               <Button
@@ -175,11 +154,8 @@ export function PlayerCard({
           </div>
         ) : (
           <>
-            {/* Header */}
             <div className="flex justify-between items-center">
-              <h3 className="text-xl font-bold text-white">
-                {player.name}
-              </h3>
+              <h3 className="text-xl font-bold text-white">{player.name}</h3>
               <div className="flex space-x-1">
                 <Button
                   variant="ghost"
@@ -210,47 +186,25 @@ export function PlayerCard({
               </div>
             </div>
 
-            {/* Strategy Info */}
-            <div className="grid grid-cols-2 gap-2 text-sm">
-              <div className="text-gray-300">Strategy:</div>
-              <div className="text-white font-medium">
-                {player.strategy}
-              </div>
-
-              <div className="text-gray-300">Card Counting:</div>
-              <div className="text-white font-medium">
-                {player.cardCounting ? "Enabled" : "Disabled"}
-              </div>
-
-              <div className="text-gray-300">Betting Strategy:</div>
-              <div className="text-white font-medium">
-                {player.bettingStrategy ? "Enabled" : "Disabled"}
-              </div>
+            <div className="text-gray-300 text-sm">
+              Player Type: {formatPlayerType(player.playerType)}
             </div>
 
-            {/* Stats */}
-            <div className="bg-emerald-950 rounded-md p-3 space-y-2">
+            <div className="bg-emerald-950 rounded-md p-3 space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-gray-300">Current Bet:</span>
-                <span className="text-white font-bold">
-                  ${player.currentBet}
-                </span>
+                <span className="text-white font-bold">${player.currentBet}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-300">Money Left:</span>
-                <span className="text-white font-bold">
-                  ${player.money}
-                </span>
+                <span className="text-white font-bold">${player.money}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-300">Record:</span>
-                <span className="text-white font-bold">
-                  W: {player.wins} / L: {player.losses}
-                </span>
+                <span className="text-white font-bold">W: {player.wins} / L: {player.losses}</span>
               </div>
             </div>
 
-            {/* Hand */}
             <div>
               <div className="text-gray-300 mb-1">Current Hand:</div>
               <div className="flex justify-center gap-1">
@@ -266,18 +220,19 @@ export function PlayerCard({
         )}
       </CardContent>
 
-      {/* Hand History (optional static) */}
       {!isEditing && (
         <CardFooter className="p-2 bg-emerald-950 rounded-b-lg">
           <Collapsible open={historyOpen} onOpenChange={setHistoryOpen}>
             <CollapsibleTrigger asChild>
-              <Button variant="ghost" className="w-full text-white hover:bg-emerald-800 flex items-center justify-center">
+              <Button
+                variant="ghost"
+                className="w-full text-white hover:bg-emerald-800 flex items-center justify-center"
+              >
                 <Eye className="h-4 w-4 mr-2" />
                 {historyOpen ? "Hide History" : "View Hand History"}
               </Button>
             </CollapsibleTrigger>
             <CollapsibleContent className="mt-2 p-2 bg-emerald-900 rounded text-sm text-white">
-              {/* You can populate this with real history if you add a /history endpoint */}
               <div className="space-y-1">
                 <div className="flex justify-between">
                   <span>Hand #1:</span><span className="text-green-400">Win (+$50)</span>

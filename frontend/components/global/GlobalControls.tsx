@@ -4,37 +4,45 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Slider } from "@/components/ui/slider"
 import { Play, FastForward, RotateCcw } from "lucide-react"
+import { playRound, fastForward } from "@/lib/api"
 
 interface GlobalControlsProps {
   simulationSpeed: number
   setSimulationSpeed: (speed: number) => void
   resetAllPlayers: () => void
-  playOneRound: () => void
-  fastForward: () => void
 }
 
 export function GlobalControls({
   simulationSpeed,
   setSimulationSpeed,
   resetAllPlayers,
-  playOneRound,
-  fastForward,
 }: GlobalControlsProps) {
+  const handlePlay = async () => {
+    await playRound()
+    location.reload()
+  }
+
+  const handleFastForward = async () => {
+    await fastForward(100, simulationSpeed)
+    location.reload()
+  }
+
   return (
     <Card className="bg-emerald-900 border-emerald-600 shadow-lg">
       <CardContent className="p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="flex flex-wrap gap-2 justify-center md:justify-start">
             <Button
-              onClick={playOneRound}
-              className="bg-emerald-700 hover:bg-emerald-600 text-white"
+              onClick={handlePlay}
+              variant="outline"
+              className="bg-emerald-800 text-white hover:bg-emerald-700 border-emerald-500"
             >
               <Play className="mr-2 h-4 w-4" />
               Play One Round
             </Button>
 
             <Button
-              onClick={fastForward}
+              onClick={handleFastForward}
               variant="outline"
               className="bg-emerald-800 text-white hover:bg-emerald-700 border-emerald-500"
             >
@@ -42,10 +50,7 @@ export function GlobalControls({
               Fast Forward x100 Hands
             </Button>
 
-            <Button
-              variant="destructive"
-              onClick={resetAllPlayers}
-            >
+            <Button variant="destructive" onClick={resetAllPlayers}>
               <RotateCcw className="mr-2 h-4 w-4" />
               Reset All Players
             </Button>
